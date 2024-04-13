@@ -6,36 +6,35 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java Maven Docker Build
+name: java_app
 
 on:
   push:
     branches:
-      - main
+      - "master"
 
 jobs:
   build:
-    runs-on: macOS-latest
-
+    name: Build Docker image
+    runs-on: macOS-latest # specify the build machine
+    
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: '11' # Choose the Java version you want
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.ngv2003 }}
+          password: ${{ secrets.dckr_pat_r8sAklusVZNFFeER0zCLSiYkbOo }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Build with Maven
-      run: mvn clean package -B
-
-    - name: Build Docker Image
-      run: docker build -t ngv03/docker-helloworld .
-
-    - name: Push Docker Image to Container Registry
-      run: |
-        echo "${{ secrets.dckr_pat_r8sAklusVZNFFeER0zCLSiYkbOo }}" | docker login -u ${{ secrets.ngv2003 }} --password-stdin
-        docker push ngv03/docker-helloworld
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.ngv2003 }}/java-app:latest
