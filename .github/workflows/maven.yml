@@ -5,7 +5,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 name: java_app
 
 on:
@@ -16,7 +15,7 @@ on:
 jobs:
   build:
     name: Build Docker image
-    runs-on: macOS-latest # specify the build machine
+    runs-on: ubuntu-latest # specify the build machine
     
     steps:
       - name: Checkout
